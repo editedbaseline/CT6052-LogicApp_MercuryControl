@@ -24,24 +24,63 @@
                 "cases": {
                     "Case_-_200_success": {
                         "actions": {
-                            "Send_an_email_(V2)_-_200_success": {
-                                "inputs": {
-                                    "body": {
-                                        "Body": "<p>Please note that a new IP prefix has been added to the national block list via Mercury. The details of this prefix are as follows:<br>\n<br>\nNetwork: @{triggerBody()?['ip_prefix']}<br>\nMask: @{triggerBody()?['mask']}<br>\n<br>\nIn the unlikely event that this is a false positive, please report it to the NMC via your FLT.</p>",
-                                        "Importance": "High",
-                                        "Subject": "MERCURY - NEW PREFIX BLOCKED",
-                                        "To": "s1909313@connect.glos.ac.uk"
-                                    },
-                                    "host": {
-                                        "connection": {
-                                            "name": "@parameters('$connections')['office365']['connectionId']"
+                            "Condition": {
+                                "actions": {
+                                    "Send_an_email_(V2)_-_200_success": {
+                                        "inputs": {
+                                            "body": {
+                                                "Body": "<p>Please note that a new IP prefix has been added to the national block list via Mercury. The details of this prefix are as follows:<br>\n<br>\nNetwork: @{triggerBody()?['ip_prefix']}<br>\nMask: @{triggerBody()?['mask']}<br>\n<br>\nIn the unlikely event that this is a false positive, please report it to the NMC via your FLT.</p>",
+                                                "Importance": "High",
+                                                "Subject": "MERCURY - NEW PREFIX BLOCKED",
+                                                "To": "s1909313@connect.glos.ac.uk"
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['office365']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/v2/Mail"
+                                        },
+                                        "runAfter": {},
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "else": {
+                                    "actions": {
+                                        "Send_an_email_(V2)": {
+                                            "inputs": {
+                                                "body": {
+                                                    "Body": "<p>Please note that a new IP prefix has been remove from the national block list via Mercury. The details of this prefix are as follows:<br>\n<br>\nNetwork: @{triggerBody()?['ip_prefix']}<br>\nMask: @{triggerBody()?['mask']}<br>\n</p>",
+                                                    "Importance": "High",
+                                                    "Subject": "MERCURY - BLOCKED PREFIX REMOVED",
+                                                    "To": "s1909313@connect.glos.ac.uk"
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['office365']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "post",
+                                                "path": "/v2/Mail"
+                                            },
+                                            "runAfter": {},
+                                            "type": "ApiConnection"
                                         }
-                                    },
-                                    "method": "post",
-                                    "path": "/v2/Mail"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "equals": [
+                                                "@triggerBody()?['mode']",
+                                                "add"
+                                            ]
+                                        }
+                                    ]
                                 },
                                 "runAfter": {},
-                                "type": "ApiConnection"
+                                "type": "If"
                             }
                         },
                         "case": 200
