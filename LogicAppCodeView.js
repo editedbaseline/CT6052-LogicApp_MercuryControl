@@ -9,9 +9,8 @@
                         "ip_prefix": "@triggerBody()?['ip_prefix']",
                         "loopback_id": "@triggerBody()?['loopback_id']",
                         "mask": "@triggerBody()?['mask']",
-                        "password": "@triggerBody()?['password']",
-                        "ssh_port": "@triggerBody()?['ssh_port']",
-                        "username": "@triggerBody()?['username']"
+                        "mode": "@triggerBody()?['mode']",
+                        "ssh_port": "@triggerBody()?['ssh_port']"
                     },
                     "function": {
                         "id": "/subscriptions/fd347284-8825-4ed2-92ec-a8e8ee6eff79/resourceGroups/ct6052mercury2/providers/Microsoft.Web/sites/CT6052-Mercury/functions/SendConfigOverSSH"
@@ -333,6 +332,30 @@
                             }
                         },
                         "case": 471
+                    },
+                    "Case_-_472_unknown_mode": {
+                        "actions": {
+                            "Send_an_email_(V2)_-_472_unknown_mode": {
+                                "inputs": {
+                                    "body": {
+                                        "Body": "<p>ERROR ENCOUNTERED<br>\n<br>\nPlease note that your new IP prefix was <strong>NOT </strong>added to the national block list via Mercury. The details of this prefix are as follows:<br>\n<br>\nNetwork: @{triggerBody()?['ip_prefix']}<br>\nMask: @{triggerBody()?['mask']}<br>\n<br>\nThe error was an unknown mode was sent to the Function App. As this is programatically controlled by the Power App, this is unlikely to be user error.</p>",
+                                        "Importance": "High",
+                                        "Subject": "MERCURY - ERROR ENCOUNTERED",
+                                        "To": "s1909313@connect.glos.ac.uk"
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['office365']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/Mail"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "case": 472
                     }
                 },
                 "default": {
@@ -394,13 +417,10 @@
                             "mask": {
                                 "type": "string"
                             },
-                            "password": {
+                            "mode": {
                                 "type": "string"
                             },
                             "ssh_port": {
-                                "type": "string"
-                            },
-                            "username": {
                                 "type": "string"
                             }
                         },
